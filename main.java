@@ -1,2 +1,2 @@
-public class main { //schokg
+public class main { //schokgas
 }
