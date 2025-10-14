@@ -15,16 +15,37 @@ public class Wordle {
             String rowGuess= row[1];
             validGuesses.add(rowGuess);
 
+                count++;
+                if (count < 2309) {
+                    String rowAnswer = row[2];
+                    validAnswers.add(rowAnswer);
+                }
+            }
+    }
+    }
 
-            //JIAMU DAI FIX NEEDED: row[2] runs out of range after about index 2309, need to not include index 0 values
-            if (Integer.parseInt(row[0])<2309){
-                String rowAnswer= row[2];
-                validAnswers.add(rowAnswer);}
+
+
+    public void RUNDAGAME(){
+        boolean win=false;
+        chooseAnswer();
+        System.out.println("Answer: "+ answer);
+        //while(!win){
+        for(int i=0;i<3;i++){
+            String guess=solve();
+            if(guess.equals(answer)){
+                win=true;
+            }
+            else{ //
+                int[] f= compareStrings(guess);
+                removeGuesses(guess, f);
+            }
+        }
 
 
 
+    }
 
-    }}
 
 
     public void printArrayLists(){
@@ -34,10 +55,9 @@ public class Wordle {
 
     }
 
-    //compares guess to answer
+    //chooses a random guess for the first guess
     public String solve(){
         int random = (int)(Math.random() * validGuesses.size());
-        //chooses a random String from validGuesses for the first guess
         String guess =  validGuesses.get(random);
 
         return guess;
@@ -73,16 +93,37 @@ public class Wordle {
 
     public void removeGuesses(String guess, int[] validate){
         for (int i = 0; i < validate.length; i++) {
-            if(validate[i]==2){
-                //code that removes all answers containing
+            if(validate[i]==red){
+                //code that removes all answers containing the letter
                 for (int j = 0; j < validGuesses.size(); j++) {
-                    if (validGuesses.get(j).contains(guess.charAt(i))){
+                    if (validGuesses.get(j).contains(guess.substring(i, i+1))){
                         validGuesses.remove(i);
                         j+=1;
                     }
                 }
             }
+            //run through each letter, categorize them as the conditional statement
+            else if (validate[i]==yellow && (guess.substring(i, i+1).equals(guess))){
+                //yellow is letter in the wrong position. remove all letters that have the
+                //wrong letter in the position but is included in the word
+                for(int j=0;j<validGuesses.size();j++){
+                    if(validGuesses.get(j).contains(guess.substring(i, i+1)) &&
+                            validGuesses.get(j).substring(i, i+1).equals(guess.substring(i, i+1))){//checks if that letter is in the position i
+                        validGuesses.remove(j);
+                    }
+                }
+            }
+            //if it is a match
+            //removes any guesses that do NOT have the specific letter
+            //in that specific position
+            else if(validate[i]==green){
+                for (int j = 0; j < validGuesses.size(); j++) {
+                    if(!validGuesses.get(j).substring(i, i+1).equals(guess.substring(i, i+1))){
+                        validGuesses.remove(j);
+                    }
+                }
+            }
         }
-
+        System.out.print(validGuesses.size());
     }
 }
