@@ -4,12 +4,17 @@ import java.lang.Math;
 
 public class Wordle {
     private static Scanner s = new Scanner(System.in);
-    public ArrayList<String> validGuesses=new ArrayList<>();
-    public ArrayList<String> validAnswers=new ArrayList<>();
-
-    public String answer;
+    public ArrayList<String> validGuesses = new ArrayList<>();
+    public ArrayList<String> validAnswers = new ArrayList<>();
+    public String answer = "";
+    public String input_alien;
 
     public Wordle(String input) {
+        input_alien = input;
+    }
+
+    public void initialize(String input) {
+
         ArrayList<String[]> rawData = CSVImporter.importData(input);
 
         for (String[] row : rawData) {
@@ -19,7 +24,6 @@ public class Wordle {
 
                 String rowGuess = row[1];
                 validGuesses.add(rowGuess);
-
 
 
                 if (row.length > 2) {
@@ -32,51 +36,57 @@ public class Wordle {
     }
 
 
-
-    public void RUNDAGAME(){
-        boolean win=false;
-        chooseAnswer();
-        System.out.println("Answer: "+ answer);
-        while(!win){
-                String guess=solve();
-                if(guess.equals(answer)){
-                    win=true;
-                }
-                else{ //
-                    int[] f= compareStrings(guess);
+    public void RUNDAGAME() {
+        int rounds=0;
+        double count = 0.0;
+        while (rounds < 1) {
+            initialize(input_alien);
+            chooseAnswer();
+            System.out.println("Answer: " + answer);
+            boolean win = false;
+            while (!win) {
+                String guess = solve();
+                count++;
+                if (guess.equals(answer)) {
+                    win = true;
+                } else { //
+                    int[] f = compareStrings(guess);
                     removeGuesses(guess, f);
                 }
+            }
+            rounds++;
         }
+        System.out.println("avg for 50: " + count);
+
     }
 
 
-
-    public void printArrayLists(){
-        for(String s: validGuesses){
+    public void printArrayLists() {
+        for (String s : validGuesses) {
             System.out.println(s);
         }
         System.out.println(validGuesses.size());
-//        for(String s: validAnswers){
-//            System.out.println(s);
-//        }
-//        System.out.println(validAnswers.size());
+        for(String s: validAnswers){
+            System.out.println(s);
+        }
+        System.out.println(validAnswers.size());
 
     }
 
     //chooses a random guess for the first guess
-    public String solve(){
-        int random = (int)(Math.random() * validGuesses.size());
+    public String solve() {
+        int random = (int) (Math.random() * validGuesses.size());
         System.out.println(" Selected Random Guess : " + random +" / "+ validGuesses.size());
-        String guess =  validGuesses.get(random);
+        String guess = validGuesses.get(random);
         System.out.println();
         System.out.println("Guess: " + guess);
         return guess;
     }
 
     //chooses a random answer in valid answers
-    public String chooseAnswer(){
+    public String chooseAnswer() {
 
-        int random = (int)(Math.random() * validAnswers.size());
+        int random = (int) (Math.random() * validAnswers.size());
         answer = validAnswers.get(random);
         System.out.println(answer);
         return answer;
@@ -95,55 +105,53 @@ public class Wordle {
                 if ((guess.charAt(i) != answer.charAt(i)) && (answer.contains(guess.charAt(i) + ""))) {
                     validate[i] = yellow;
 
-                }
-                else if (guess.charAt(i) != answer.charAt(i) && !(answer.contains(guess.charAt(i) + ""))) {
+                    //establish variable, go through string, and get number of that letter
+
+                } else if (guess.charAt(i) != answer.charAt(i) && !(answer.contains(guess.charAt(i) + ""))) {
                     validate[i] = red;
 
-                }
-                else{
+                } else {
                     validate[i] = green;
                 }
             }
         }
-        for (int i:validate) {
-            System.out.print(i+" ");
+        for (int i : validate) {
+            System.out.print(i + " ");
         }
         return validate;
     }
 
 
     // [0,1,2,1,0] 0- match, 1- wrong location, 2-no
-    public void removeGuesses(String guess, int[] validate){
+    public void removeGuesses(String guess, int[] validate) {
         for (int i = 0; i < validate.length; i++) {
             char charAtIndex = guess.charAt(i);
-            if(validate[i]==red){
+            if (validate[i] == red) {
                 //code that removes all answers containing the letter
-                for (int j = validGuesses.size()-1; j >=0; j--) {
-                    String pg= validGuesses.get(j);
-                    if (pg.contains(charAtIndex+"")) {
+                for (int j = validGuesses.size() - 1; j >= 0; j--) {
+                    String pg = validGuesses.get(j);
+                    if (pg.contains(charAtIndex + "")) {
                         validGuesses.remove(j);
                         //System.out.println("Removed "+validGuesses.get(j));
                     }
                 }
             }
 //            run through each letter, categorize them as the conditional statement
-            else if (validate[i]==yellow && (guess.substring(i, i+1).equals(guess))){
+            else if (validate[i] == yellow) {
                 //yellow is letter in the wrong position. remove all letters that have the
                 //wrong letter in the position but is included in the word
-                for(int j=0;j<validGuesses.size();j++){
-                    if(validGuesses.get(j).contains(guess.substring(i, i+1)) &&
-                            validGuesses.get(j).substring(i, i+1).equals(guess.substring(i, i+1))){//checks if that letter is in the position i
+                for (int j = validGuesses.size() - 1; j > 0; j--) {
+                    if (guess.substring(i, i + 1).equals(validGuesses.get(j).substring(i, i + 1)) || !validGuesses.get(j).contains(guess.substring(i, i + 1))) {//checks if that letter is in the position i
                         validGuesses.remove(j);
                     }
                 }
             }
-//            if it is a match
 //            removes any guesses that do NOT have the specific letter
 //            in that specific position
-            else if(validate[i]==green){
-                for (int j = validGuesses.size()-1; j >0; j--) {
+            else if (validate[i] == green) {
+                for (int j = validGuesses.size() - 1; j > 0; j--) {
                     String pg = validGuesses.get(j);
-                    if(pg.indexOf(charAtIndex)!= i){
+                    if (!pg.substring(i, i + 1).equals(validGuesses.get(j).substring(i, i + 1))) {
                         validGuesses.remove(j);
                     }
                 }
