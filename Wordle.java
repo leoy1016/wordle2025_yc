@@ -39,7 +39,7 @@ public class Wordle {
     public void RUNDAGAME() {
         int rounds=0;
         double count = 0.0;
-        while (rounds < 1) {
+        while (rounds < 50) {
             initialize(input_alien);
             chooseAnswer();
             System.out.println("Answer: " + answer);
@@ -106,7 +106,6 @@ public class Wordle {
                     validate[i] = yellow;
 
                     //establish variable, go through string, and get number of that letter
-
                 } else if (guess.charAt(i) != answer.charAt(i) && !(answer.contains(guess.charAt(i) + ""))) {
                     validate[i] = red;
 
