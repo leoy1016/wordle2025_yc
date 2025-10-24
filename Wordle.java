@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.lang.Math;
 
@@ -39,7 +41,7 @@ public class Wordle {
     public void RUNDAGAME() {
         int rounds=0;
         double count = 0.0;
-        while (rounds < 50) {
+        while (rounds < 10000) {
             initialize(input_alien);
             chooseAnswer();
             System.out.println("Answer: " + answer);
