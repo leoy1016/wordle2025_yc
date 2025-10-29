@@ -41,7 +41,7 @@ public class Wordle {
     public void RUNDAGAME() {
         int rounds=0;
         double count = 0.0;
-        while (rounds < 10) {
+        while (rounds < 1000) {
             initialize(input_alien);
             chooseAnswer();
             System.out.println("Answer: " + answer);
