@@ -1,16 +1,11 @@
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Scanner;
 import java.lang.Math;
 
 public class Wordle {
-    private static Scanner s = new Scanner(System.in);
     public ArrayList<String> validGuesses = new ArrayList<>();
     public ArrayList<String> validAnswers = new ArrayList<>();
     public String answer = "";
     public String input_alien;
-
     public Wordle(String input) {
         input_alien = input;
     }
@@ -41,9 +36,11 @@ public class Wordle {
     public void RUNDAGAME() {
         int rounds=0;
         double count = 0.0;
-        while (rounds < 1000) {
+        //just change this to whatever number of times you want to run it
+        while (rounds < 1) {
             initialize(input_alien);
-            chooseAnswer();
+            answer = "modem";
+//            chooseAnswer();
             System.out.println("Answer: " + answer);
             boolean win = false;
             while (!win) {
@@ -79,7 +76,8 @@ public class Wordle {
     public String solve() {
         int random = (int) (Math.random() * validGuesses.size());
         System.out.println(" Selected Random Guess : " + random +" / "+ validGuesses.size());
-        String guess = validGuesses.get(random);
+//        String guess = validGuesses.get(random);
+        String guess = "mummy";
         System.out.println();
         System.out.println("Guess: " + guess);
         return guess;
@@ -87,7 +85,6 @@ public class Wordle {
 
     //chooses a random answer in valid answers
     public String chooseAnswer() {
-
         int random = (int) (Math.random() * validAnswers.size());
         answer = validAnswers.get(random);
         System.out.println(answer);
@@ -105,9 +102,9 @@ public class Wordle {
             for (int j = 0; j < answer.length(); j++) {
                 //check letter at each index
                 if ((guess.charAt(i) != answer.charAt(i)) && (answer.contains(guess.charAt(i) + ""))) {
-                    validate[i] = yellow;
+                        validate[i]=yellow;
 
-                    //establish variable, go through string, and get number of that letter
+                        //establish variable, go through string, and get number of that letter
                 }
                 else if (guess.charAt(i) != answer.charAt(i) && !(answer.contains(guess.charAt(i) + ""))) {
                     validate[i] = red;
@@ -135,7 +132,6 @@ public class Wordle {
                     String pg = validGuesses.get(j);
                     if (pg.contains(charAtIndex + "")) {
                         validGuesses.remove(j);
-                        //System.out.println("Removed "+validGuesses.get(j));
                     }
                 }
             }
@@ -152,14 +148,20 @@ public class Wordle {
 //            removes any guesses that do NOT have the specific letter
 //            in that specific position
             else if (validate[i] == green) {
-                for (int j = validGuesses.size() - 1; j > 0; j--) {
-                    String pg = validGuesses.get(j);
-                    if (!pg.substring(i, i + 1).equals(validGuesses.get(j).substring(i, i + 1))) {
-                        validGuesses.remove(j);
+                    for (int j = validGuesses.size() - 1; j >= 0; j--) {
+                        String pg = validGuesses.get(j);
+                        if (!pg.substring(i, i + 1).equals(guess.substring(i, i + 1))) {
+                            validGuesses.remove(j);
+                        }
                     }
                 }
             }
+
+
+            if (GreenOrYellow>1){
+
+            }
+
+
         }
-        System.out.print(validGuesses.size());
     }
-}
