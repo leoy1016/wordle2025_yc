@@ -37,10 +37,9 @@ public class Wordle {
         int rounds=0;
         double count = 0.0;
         //just change this to whatever number of times you want to run it
-        while (rounds < 1) {
+        while (rounds < 1000) {
             initialize(input_alien);
-            answer = "modem";
-//            chooseAnswer();
+            chooseAnswer();
             System.out.println("Answer: " + answer);
             boolean win = false;
             while (!win) {
@@ -76,8 +75,7 @@ public class Wordle {
     public String solve() {
         int random = (int) (Math.random() * validGuesses.size());
         System.out.println(" Selected Random Guess : " + random +" / "+ validGuesses.size());
-//        String guess = validGuesses.get(random);
-        String guess = "mummy";
+        String guess = validGuesses.get(random);
         System.out.println();
         System.out.println("Guess: " + guess);
         return guess;
@@ -115,10 +113,53 @@ public class Wordle {
                 }
             }
         }
-        for (int i : validate) {
-            System.out.print(i + " ");
+        for (int i = 0; i < 5; i++) {
+            int repeats = 0;
+            for (int j = 0; j < 5; j++) {
+                if (guess.charAt(i)==guess.charAt(j)){
+                    repeats++;
+                }
+            }
+            if (validate[i] == yellow&&repeats>1) {
+                System.out.println("RUN"+i);
+
+                int answerOcurrances = 0;
+                for (int k = 0; k < guess.length(); k++) {
+                    if (guess.charAt(i) == answer.charAt(k)) {
+                        answerOcurrances++;
+                    }
+                }
+
+                int guessOcurrances = 0;
+                for (int k = 0; k <5; k++) {
+                    if (guess.charAt(i) == guess.charAt(k) && (validate[k] == green || validate[k] == yellow)) {
+                        guessOcurrances++;
+                    }
+                }
+
+                boolean PreexistingGreenBean=false;
+                for (int pp=0; pp<5; pp++) {
+                    if((guess.charAt(i) == guess.charAt(pp))&&(validate[pp]==0||validate[pp]==1)){
+                        PreexistingGreenBean=true;
+                    }
+                }
+
+                System.out.println("guess"+ guessOcurrances);
+                System.out.println("answer"+ answerOcurrances);
+
+                if ((guessOcurrances>answerOcurrances)&&PreexistingGreenBean){
+                    validate[i]=red;
+                }
+
+
+            }
+        }
+
+        for (int i:validate) {
+            System.out.print(i+" ");
         }
         return validate;
+
     }
 
 
@@ -154,14 +195,7 @@ public class Wordle {
                             validGuesses.remove(j);
                         }
                     }
-                }
             }
-
-
-            if (GreenOrYellow>1){
-
-            }
-
-
         }
     }
+}
